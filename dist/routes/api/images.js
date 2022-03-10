@@ -44,7 +44,7 @@ var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var sharp_1 = __importDefault(require("sharp"));
 var images = express_1.default.Router();
-images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+images.get("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var thumbPath, fullPath, thumbLocation_1, message;
     return __generator(this, function (_a) {
         if (req.query.filename &&
@@ -60,7 +60,12 @@ images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
                         if (!fs_1.default.existsSync(thumbPath)) {
                             fs_1.default.mkdirSync(thumbPath);
                         }
-                        thumbLocation_1 = path_1.default.join(thumbPath, req.query.filename + "-" + req.query.width + "-" + req.query.height + ".jpg");
+                        thumbLocation_1 = path_1.default.join(thumbPath, req.query.filename +
+                            "-" +
+                            req.query.width +
+                            "-" +
+                            req.query.height +
+                            ".jpg");
                         if (fs_1.default.existsSync(thumbLocation_1)) {
                             res.sendFile(thumbLocation_1);
                         }
@@ -68,7 +73,8 @@ images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
                             (0, sharp_1.default)(fullPath + req.query.filename + ".jpg")
                                 .resize(parseInt(req.query.width), parseInt(req.query.height))
                                 .toFormat("jpg")
-                                .toFile(thumbLocation_1).then(function () {
+                                .toFile(thumbLocation_1)
+                                .then(function () {
                                 res.sendFile(thumbLocation_1);
                             });
                         }

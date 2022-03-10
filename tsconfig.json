@@ -12,6 +12,11 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["./src"],
-  "exclude": ["node_modules", "spec", "./dist"]
+  "exclude": ["node_modules", "spec", "./dist"],
+  "lint": [
+    {
+        "exclude": ["node_modules", "spec", "./dist"],
+    }
+]
 }
 

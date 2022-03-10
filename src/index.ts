@@ -1,4 +1,4 @@
-import express, { Application, Request, response, Response } from "express";
+import express, { Application } from "express";
 import morgan from "morgan";
 import * as dotenv from "dotenv";
 import routes from "./routes/index";
