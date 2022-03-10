@@ -1,4 +1,4 @@
-# image-processing-api
+# Image Processing Api
 
 #Scripts
 - ``` npm run build ``` to build the .ts files
