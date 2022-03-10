@@ -12,6 +12,7 @@
 ## Endpoints
 - ``` /api/images?filename={filename}&width={width}&height={height} ``` to resize an image
 - ``` / ``` to get hello world message
+- http://localhost:3000/api/images?filename=fjord&width=200&height=200 endpoint should return status 200
 
 ## Examples
 - ``` /api/images?filename=fjord&width=200&height=200 ``` gets you the fjord image in the full folder resized to 200x200
