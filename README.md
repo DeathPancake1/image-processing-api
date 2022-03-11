@@ -16,3 +16,6 @@
 
 ## Examples
 - ``` /api/images?filename=fjord&width=200&height=200 ``` gets you the fjord image in the full folder resized to 200x200
+
+## Entry Point
+    The entry point of the application is the dist/index.js file

@@ -42,61 +42,91 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
-var sharp_1 = __importDefault(require("sharp"));
+var processing_1 = __importDefault(require("../../processing"));
 var images = express_1.default.Router();
-images.get("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var thumbPath, fullPath, thumbLocation_1, message;
+var validate = function (query) { return __awaiter(void 0, void 0, void 0, function () {
+    var fullPath, width, height;
     return __generator(this, function (_a) {
-        if (req.query.filename &&
-            !isNaN(parseInt(req.query.width)) &&
-            !isNaN(parseInt(req.query.height)) &&
-            parseInt(req.query.width) > 1 &&
-            parseInt(req.query.height) > 1) {
-            try {
+        switch (_a.label) {
+            case 0:
+                fullPath = path_1.default.join(__dirname, "../../../full/");
+                if (!query.filename) {
+                    return [2 /*return*/, "enter a valid file name"];
+                }
+                return [4 /*yield*/, !fs_1.default.existsSync(fullPath + query.filename + ".jpg")];
+            case 1:
+                if (_a.sent()) {
+                    return [2 /*return*/, "enter a valid file name"];
+                }
+                if (!query.width || !query.height) {
+                    return [2 /*return*/, "missing arguments"];
+                }
+                width = parseInt(query.width || "");
+                if (Number.isNaN(width) || width < 1) {
+                    return [2 /*return*/, "Please provide a positive numerical value for the 'width' query segment."];
+                }
+                height = parseInt(query.height || "");
+                if (Number.isNaN(height) || height < 1) {
+                    return [2 /*return*/, "Please provide a positive numerical value for the 'height' query segment."];
+                }
+                return [2 /*return*/, null];
+        }
+    });
+}); };
+images.get("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var validateMessage, thumbPath, fullPath, param, thumbLocation;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, validate(req.query)];
+            case 1:
+                validateMessage = _a.sent();
+                if (validateMessage) {
+                    res.status(400).send(validateMessage);
+                    return [2 /*return*/];
+                }
                 thumbPath = path_1.default.join(__dirname, "../../../thumb/");
                 fullPath = path_1.default.join(__dirname, "../../../full/");
-                if (fs_1.default.existsSync(fullPath + req.query.filename + ".jpg")) {
-                    try {
-                        if (!fs_1.default.existsSync(thumbPath)) {
-                            fs_1.default.mkdirSync(thumbPath);
-                        }
-                        thumbLocation_1 = path_1.default.join(thumbPath, req.query.filename +
-                            "-" +
-                            req.query.width +
-                            "-" +
-                            req.query.height +
-                            ".jpg");
-                        if (fs_1.default.existsSync(thumbLocation_1)) {
-                            res.sendFile(thumbLocation_1);
-                        }
-                        else {
-                            (0, sharp_1.default)(fullPath + req.query.filename + ".jpg")
-                                .resize(parseInt(req.query.width), parseInt(req.query.height))
-                                .toFormat("jpg")
-                                .toFile(thumbLocation_1)
-                                .then(function () {
-                                res.sendFile(thumbLocation_1);
-                            });
-                        }
-                    }
-                    catch (err) {
-                        console.log(err);
-                        res.status(405).send("image couldn't be prcessed");
-                    }
+                param = {
+                    src: fullPath + req.query.filename + ".jpg",
+                    target: thumbPath +
+                        req.query.filename +
+                        "-" +
+                        req.query.width +
+                        "-" +
+                        req.query.height +
+                        ".jpg",
+                    width: parseInt(req.query.width),
+                    height: parseInt(req.query.height),
+                };
+                thumbLocation = path_1.default.join(thumbPath, req.query.filename +
+                    "-" +
+                    req.query.width +
+                    "-" +
+                    req.query.height +
+                    ".jpg");
+                if (fs_1.default.existsSync(thumbLocation)) {
+                    res.sendFile(thumbLocation);
                 }
                 else {
-                    res.status(404).send("file doesn't exist");
+                    (0, processing_1.default)(param).then(function (Response) {
+                        if (!Response) {
+                            res
+                                .status(200)
+                                .sendFile(thumbPath +
+                                req.query.filename +
+                                "-" +
+                                req.query.width +
+                                "-" +
+                                req.query.height +
+                                ".jpg");
+                        }
+                        else {
+                            res.status(400).send(Response);
+                        }
+                    });
                 }
-            }
-            catch (err) {
-                console.log(err);
-            }
+                return [2 /*return*/];
         }
-        else {
-            message = "Parameter error";
-            res.status(400).send(message);
-        }
-        return [2 /*return*/];
     });
 }); });
 exports.default = images;

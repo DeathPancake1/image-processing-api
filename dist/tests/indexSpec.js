@@ -39,8 +39,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var path_1 = __importDefault(require("path"));
 var supertest_1 = __importDefault(require("supertest"));
 var index_1 = __importDefault(require("../index"));
+var processing_1 = __importDefault(require("../processing"));
 var request = (0, supertest_1.default)(index_1.default);
 describe("Test responses from endpoints", function () {
     describe("endpoint: /", function () {
@@ -52,6 +54,18 @@ describe("Test responses from endpoints", function () {
                     case 1:
                         response = _a.sent();
                         expect(response.status).toBe(200);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("gets /hii endpoint and returns error", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request.get("/hii")];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.status).toBe(404);
                         return [2 /*return*/];
                 }
             });
@@ -95,4 +109,32 @@ describe("Test responses from endpoints", function () {
             });
         }); });
     });
+});
+describe("Test image processing", function () {
+    it("should not throw error", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var fullPath, thumbPath, param;
+        return __generator(this, function (_a) {
+            fullPath = path_1.default.join(__dirname, "../../full/");
+            thumbPath = path_1.default.join(__dirname, "../../thumb/");
+            param = {
+                src: fullPath + "fjord.jpg",
+                target: thumbPath + "fjord-200-200.jpg",
+                width: 200,
+                height: 200,
+            };
+            expect(function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, (0, processing_1.default)(param)];
+                            case 1:
+                                _a.sent();
+                                return [2 /*return*/];
+                        }
+                    });
+                });
+            }).not.toThrow();
+            return [2 /*return*/];
+        });
+    }); });
 });
